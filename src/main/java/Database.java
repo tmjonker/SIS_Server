@@ -94,7 +94,7 @@ public class Database {
                 System.out.println("Failure.");
             }
         } catch (SQLException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -108,6 +108,7 @@ public class Database {
             return row.getInt("numberStudents");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return 0;
     }
@@ -126,13 +127,13 @@ public class Database {
                     row.getInt("zipCode"), row.getString("email"),
                     row.getInt("studentId"), row.getString("status"));
         } catch (SQLException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         return student;
     }
 
     public ArrayList<Course> getCourses() {
-        ArrayList<Course> courseList = new ArrayList<Course>();
+        ArrayList<Course> courseList = new ArrayList<>();
         try {
             Statement s = con.createStatement();
             String select = "SELECT * FROM classes";
@@ -146,7 +147,7 @@ public class Database {
                         row.getString("classEndTime")));
             }
         } catch (SQLException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         return courseList;
     }
@@ -155,7 +156,7 @@ public class Database {
     Pull the courses that the student(studentId) is taking and store them in an ArrayList.
      */
     public ArrayList<Course> getStudentCourses(int studentId) {
-        ArrayList<Course> courseList = new ArrayList<Course>();
+        ArrayList<Course> courseList = new ArrayList<>();
         try {
             Statement s1 = con.createStatement();
             String select1 = "SELECT classid FROM studentschedule WHERE studentid = " + studentId;
@@ -166,9 +167,9 @@ public class Database {
                 tempList.add(row1.getInt("classId"));
             }
 
-            for (int i = 0; i < tempList.size(); i++) {
+            for (Integer integer : tempList) {
                 Statement s2 = con.createStatement();
-                String select2 = "SELECT * FROM classes WHERE classid = " + tempList.get(i);
+                String select2 = "SELECT * FROM classes WHERE classid = " + integer;
                 ResultSet row2 = s2.executeQuery(select2);
                 row2.next();
                 courseList.add(new Course(row2.getInt("classID"),
@@ -178,7 +179,7 @@ public class Database {
                         row2.getString("classEndTime")));
             }
         } catch (SQLException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         return courseList;
     }

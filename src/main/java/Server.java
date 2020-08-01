@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
+import java.util.ArrayList;
 
 public class Server {
 
@@ -19,7 +19,7 @@ public class Server {
                 connected = db.connect();
             }
         } catch (IOException ex) {
-            System.out.println("Server." + ex);
+            ex.printStackTrace();
         }
     }
 
@@ -30,7 +30,7 @@ public class Server {
      */
     public class Listener implements Runnable {
         private volatile boolean exit = false;
-        private Socket sock;
+        private final Socket sock;
         public Listener(Socket s) {
             sock = s;
         }
@@ -101,24 +101,24 @@ public class Server {
     that list to the client.
      */
     public void transmitCourseList(Socket sock) {
-        List courseList = db.getCourses();
+        ArrayList<Course> courseList = db.getCourses();
 
         try {
             OutputStream outputStream = sock.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
             dataOutputStream.writeInt(courseList.size());
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
 
         try {
-            for (int i = 0; i < courseList.size(); i++) {
+            for (Course course : courseList) {
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(courseList.get(i));
+                objectOutputStream.writeObject(course);
             }
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -127,24 +127,24 @@ public class Server {
     that was received from the client.  It then transmits this list back to the client to be viewed.
      */
     private void transmitStudentCourseList(Socket sock, int studentId) {
-        List courseList = db.getStudentCourses(studentId);
+        ArrayList<Course> courseList = db.getStudentCourses(studentId);
 
         try {
             OutputStream outputStream = sock.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
             dataOutputStream.writeInt(courseList.size());
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
 
         try {
-            for (int i = 0; i < courseList.size(); i++) {
+            for (Course course : courseList) {
                 OutputStream outputStream = sock.getOutputStream();
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-                objectOutputStream.writeObject(courseList.get(i));
+                objectOutputStream.writeObject(course);
             }
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -160,10 +160,10 @@ public class Server {
             Student student = (Student) objectInputStream.readObject();
             db.addStudent(student);
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
             System.exit(0);
         } catch (ClassNotFoundException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -178,6 +178,7 @@ public class Server {
             dataOutputStream.writeInt(db.getNumberStudents());
         } catch (IOException ex) {
             listener.stop();
+            ex.printStackTrace();
         }
     }
 
@@ -190,7 +191,7 @@ public class Server {
             DataInputStream dataInputStream = new DataInputStream(inputStream);
             sendStudent(db.getStudent(dataInputStream.readInt()), sock);
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -203,7 +204,7 @@ public class Server {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
             objectOutputStream.writeObject(s);
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -223,20 +224,18 @@ public class Server {
             int classId = Integer.parseInt(data.substring(data.indexOf(",") + 1));
             outcome = db.addClassStudent(studentId, classId);
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         try {
+            OutputStream outputStream = sock.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
             if (outcome) {
-                OutputStream outputStream = sock.getOutputStream();
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
                 dataOutputStream.writeInt(1);
             } else {
-                OutputStream outputStream = sock.getOutputStream();
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
                 dataOutputStream.writeInt(-1);
             }
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -254,21 +253,19 @@ public class Server {
             int classId = Integer.parseInt(data.substring(data.indexOf(",") + 1));
             outcome = db.dropClassStudent(studentId, classId);
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
         try {
+            OutputStream outputStream = sock.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
             if (outcome) {
-                OutputStream outputStream = sock.getOutputStream();
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
                 dataOutputStream.writeInt(1);
 
             } else {
-                OutputStream outputStream = sock.getOutputStream();
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
                 dataOutputStream.writeInt(-1);
             }
         } catch (IOException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
         }
     }
 }
