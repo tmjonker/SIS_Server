@@ -7,7 +7,7 @@ public class CommandPrompt {
     public void launch() {
         scanner = new Scanner(System.in);
         System.out.println("Enter 1 to start server.  Enter 0 to quit.");
-        while (input != 0 || input != 1) {
+        while (true) {
             if (scanner.hasNextInt()) {
                 input = scanner.nextInt();
                 if (input == 1) {
