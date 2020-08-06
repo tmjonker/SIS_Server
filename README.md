@@ -1,7 +1,7 @@
 # Student Information System - Server
 
 This is a project that I undertook to learn more about Java and MySQL.  I specifically wanted to learn more about JavaFX, 
-networking using Sockets, JDBC, and multi-threading.  It consists of two parts a client and a server.  This is just the server 
+networking using Sockets, Serialization, JDBC, and multi-threading.  It consists of two parts a client and a server.  This is just the server 
 code.  It uses maven as the build tool.
 
 ## Description
